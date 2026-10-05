@@ -1,15 +1,25 @@
 import random
 
 #FIX: Refactored four functions into logic_utils.py using agent mode
-def get_range_for_difficulty(difficulty: str): 
+# FIX: range and attempt limit live together so they can't drift apart
+DIFFICULTY_SETTINGS = {
+    "Easy": {"low": 1, "high": 20, "attempts": 6},
+    "Normal": {"low": 1, "high": 100, "attempts": 8},
+    "Hard": {"low": 1, "high": 50, "attempts": 6},  # FIX: 5 attempts could not guarantee a win on 1-50 (needs up to 6)
+}
+DEFAULT_DIFFICULTY = "Normal"
+
+
+def get_range_for_difficulty(difficulty: str):
     """Return (low, high) inclusive range for a given difficulty."""
-    if difficulty == "Easy":
-        return 1, 20
-    if difficulty == "Normal":
-        return 1, 100
-    if difficulty == "Hard":
-        return 1, 50
-    return 1, 100
+    settings = DIFFICULTY_SETTINGS.get(difficulty, DIFFICULTY_SETTINGS[DEFAULT_DIFFICULTY])
+    return settings["low"], settings["high"]
+
+
+def get_attempt_limit(difficulty: str):
+    """Return the number of attempts allowed for a given difficulty."""
+    settings = DIFFICULTY_SETTINGS.get(difficulty, DIFFICULTY_SETTINGS[DEFAULT_DIFFICULTY])
+    return settings["attempts"]
 
 
 def parse_guess(raw: str, low: int = None, high: int = None):

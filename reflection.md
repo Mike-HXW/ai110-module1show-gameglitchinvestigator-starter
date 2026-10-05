@@ -16,12 +16,10 @@ Answer each question in 3 to 5 sentences. Be specific and honest about what actu
 Document at least 3 bugs you found. Add rows as needed.
 
 | Input | Expected Behavior | Actual Behavior | Console Output / Error | Suspected code location
-|-------|-------------------|-----------------|------------------------|---------------|
- guess 9  Go Lower hint       Go Higher hint     None                  app.py check_guess
-Difficulty show "guess a number show "guess a number
-   Easy     between 1-20."       between 1-100"        None            app.py get_range_for_difficulty
-Difficulty have 1-20 secret. have 73,84 as secret.    None             app.py
-  Easy         
+|--------------------------|-------------------|-----------------------|-----------------------|
+| guess 9 | Go Lower hint | Go Higher hint | None | app.py check_guess |
+| Difficulty Easy | show "guess a number between 1-20." | show "guess a number  between 1-100" | None | app.py get_range_for_difficulty |
+| Difficulty Easy | have 1-20 secret | have 73,84 as secret | None | app.py |      
 
 ---
 

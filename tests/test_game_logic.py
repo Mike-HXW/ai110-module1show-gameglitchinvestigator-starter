@@ -90,3 +90,24 @@ def test_parse_guess_rejects_empty_and_non_numbers():
 
 def test_parse_guess_without_range_skips_range_check():
     assert parse_guess("9999") == (True, 9999, None)
+
+
+# --- Difficulty config: range and attempts must stay consistent ---
+import math
+from logic_utils import DIFFICULTY_SETTINGS, get_attempt_limit, get_range_for_difficulty
+
+
+def test_every_difficulty_is_winnable_by_binary_search():
+    # Attempts must be >= ceil(log2(range size)), otherwise a win isn't guaranteed
+    for name in DIFFICULTY_SETTINGS:
+        low, high = get_range_for_difficulty(name)
+        needed = math.ceil(math.log2(high - low + 1))
+        assert get_attempt_limit(name) >= needed, name
+
+
+def test_getters_match_settings_and_unknown_falls_back_to_normal():
+    for name, cfg in DIFFICULTY_SETTINGS.items():
+        assert get_range_for_difficulty(name) == (cfg["low"], cfg["high"])
+        assert get_attempt_limit(name) == cfg["attempts"]
+    assert get_range_for_difficulty("Nope") == get_range_for_difficulty("Normal")
+    assert get_attempt_limit("Nope") == get_attempt_limit("Normal")

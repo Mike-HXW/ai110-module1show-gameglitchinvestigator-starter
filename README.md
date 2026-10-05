@@ -45,15 +45,4 @@ Describe your fixed game in numbered steps so a reader can follow along without 
 6. A celebration effects appear with the corrected final score based on guess times.
 7. Game ends here, user can switch diffculties or start new games if needed
 
-**Screenshot** *(optional)*: <!-- Insert a screenshot of your fixed, winning game here -->
 
-## 🧪 Test Results
-
-```
-# Paste your pytest output here,
-=================================================================  ==================================================================
-```
-
-## 🚀 Stretch Features
-
-- [ ] [If you choose to complete Challenge 4, describe the Enhanced UI changes here — a screenshot is optional]
