@@ -51,16 +51,7 @@ Describe your fixed game in numbered steps so a reader can follow along without 
 
 ```
 # Paste your pytest output here,
-================================================================= test session starts ==================================================================
-platform darwin -- Python 3.13.7, pytest-9.1.1, pluggy-1.6.0
-rootdir: /Users/mikewang/Desktop/CodePath/ai110-module1show-gameglitchinvestigator-starter
-plugins: anyio-4.15.1
-collected 23 items                                                                                                                                     
-
-tests/test_app_flow.py .........                                                                                                                 [ 39%]
-tests/test_game_logic.py ..............                                                                                                          [100%]
-
-================================================================== 23 passed in 1.60s ==================================================================
+=================================================================  ==================================================================
 ```
 
 ## 🚀 Stretch Features
