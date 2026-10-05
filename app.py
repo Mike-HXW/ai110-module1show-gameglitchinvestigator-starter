@@ -102,8 +102,8 @@ if submit:
         outcome = check_guess(guess_int, st.session_state.secret)
         message = { #FIX: modify the hint message to be consistent to the truth
             "Win": "🎉 Correct!",
-            "Too High": "📉 Go LOWER!",
-            "Too Low": "📈 Go HIGHER!",
+            "Too High": "📉 Too High! Go LOWER!", # FIX: hint shows both the outcome and the direction
+            "Too Low": "📈 Too Low! Go HIGHER!",
         }[outcome]
 
         if show_hint:
@@ -125,6 +125,7 @@ if submit:
         else:
             if st.session_state.attempts >= attempt_limit:
                 st.session_state.status = "lost"
+                st.session_state.score = 0 # FIX: a lost game scores 0
                 st.error(
                     f"Out of attempts! "
                     f"The secret was {st.session_state.secret}. "

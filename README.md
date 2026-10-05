@@ -26,27 +26,41 @@ It wrote the code, ran away, and now the game is unplayable.
 ## 📝 Document Your Experience
 
 - [ ] Describe the game's purpose.
+   The game's purpose is to guess an integer number in a fixed range in a limit number of tries. A hint of either the guess is too high or too low is provided after each guess.
 - [ ] Detail which bugs you found.
+   Several types of bugs are found. The first type is logic bugs, which includes an opposite direction hints and wrong score addition when attempts are even. The second type is data type handling, where some time string is used to compare with integer which leads bugs. The third type is system setting, where UI like number range, attempts, and game status are not updated when it is required.
 - [ ] Explain what fixes you applied.
+   With the help of AI, the first type of bugs is fixed by debugging  incorrect logics in comparison functions. The second type of bug is fixed by letting all input type handled by a single function before any further comparison is made Data type and range checking are used in the function. The third type of error is fixed by considering the workflow when and what game state should restart.  Python tests are written for all fixes. 
 
 ## 📸 Demo Walkthrough
 
 Describe your fixed game in numbered steps so a reader can follow along without watching a video:
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
+## Demo Walkthrough
+1. User selects a difficulty, normal by default
+2. User enters a guess of 50
+3. Game returns "Too High! Go LOWER!"
+4. User enters a guess of 30, and the game shows "Too Low! GO HIGHER"
+5. After several entries, when user enters 42, game returns "Correct!"
+6. A celebration effects appear with the corrected final score based on guess times.
+7. Game ends here, user can switch diffculties or start new games if needed
 
 **Screenshot** *(optional)*: <!-- Insert a screenshot of your fixed, winning game here -->
 
 ## 🧪 Test Results
 
 ```
-# Paste your pytest output here, e.g.:
-# pytest tests/
-# ========================= X passed in 0.XXs =========================
+# Paste your pytest output here,
+================================================================= test session starts ==================================================================
+platform darwin -- Python 3.13.7, pytest-9.1.1, pluggy-1.6.0
+rootdir: /Users/mikewang/Desktop/CodePath/ai110-module1show-gameglitchinvestigator-starter
+plugins: anyio-4.15.1
+collected 23 items                                                                                                                                     
+
+tests/test_app_flow.py .........                                                                                                                 [ 39%]
+tests/test_game_logic.py ..............                                                                                                          [100%]
+
+================================================================== 23 passed in 1.60s ==================================================================
 ```
 
 ## 🚀 Stretch Features

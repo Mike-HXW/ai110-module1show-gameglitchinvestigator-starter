@@ -98,3 +98,32 @@ def test_hard_mode_is_winnable_by_binary_search():
         else:
             hi = mid - 1
     assert at.session_state.status == "won"
+
+
+def test_hint_shows_outcome_and_direction():
+    at = run_app()
+    at.session_state.secret = 50
+    submit(at, "80")
+    assert "Too High" in at.warning[0].value and "Go LOWER" in at.warning[0].value
+    submit(at, "20")
+    assert "Too Low" in at.warning[0].value and "Go HIGHER" in at.warning[0].value
+
+
+def test_losing_sets_score_to_zero():
+    at = run_app()
+    at.session_state.secret = 99
+    for _ in range(8):
+        submit(at, "1")
+    assert at.session_state.status == "lost"
+    assert at.session_state.score == 0
+    assert "Score: 0" in at.error[-1].value
+
+
+def test_winning_keeps_deductions_from_wrong_guesses():
+    at = run_app()
+    at.session_state.secret = 50
+    submit(at, "20")  # -5
+    submit(at, "80")  # -5
+    submit(at, "50")  # +70 on attempt 3
+    assert at.session_state.status == "won"
+    assert at.session_state.score == 60
