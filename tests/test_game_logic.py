@@ -56,3 +56,37 @@ def test_new_game_state_resets_everything():
     assert state["score"] == 0
     assert state["status"] == "playing"
     assert state["history"] == []
+
+
+# --- Tests for the second round of fixes ---
+from logic_utils import parse_guess
+
+
+def test_parse_guess_accepts_valid_in_range():
+    assert parse_guess("50", 1, 100) == (True, 50, None)
+    assert parse_guess(" 7 ", 1, 20) == (True, 7, None)
+    assert parse_guess("5.0", 1, 20) == (True, 5, None)
+
+
+def test_parse_guess_rejects_out_of_range():
+    for raw in ["0", "-5", "21", "9999"]:
+        ok, value, err = parse_guess(raw, 1, 20)
+        assert not ok and value is None
+        assert "between 1 and 20" in err
+
+
+def test_parse_guess_rejects_decimals_instead_of_truncating():
+    ok, value, err = parse_guess("3.9", 1, 20)
+    assert not ok and value is None
+    assert err == "Enter a whole number."
+
+
+def test_parse_guess_rejects_empty_and_non_numbers():
+    for raw in [None, "", "   "]:
+        assert parse_guess(raw, 1, 20)[0] is False
+    for raw in ["abc", "nan", "inf", "1e400"]:
+        assert parse_guess(raw, 1, 20)[0] is False
+
+
+def test_parse_guess_without_range_skips_range_check():
+    assert parse_guess("9999") == (True, 9999, None)

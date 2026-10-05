@@ -1,4 +1,3 @@
-import random
 import streamlit as st
 from logic_utils import check_guess, get_range_for_difficulty, new_game_state, parse_guess, update_score
 
@@ -18,7 +17,7 @@ difficulty = st.sidebar.selectbox(
 attempt_limit_map = {
     "Easy": 6,
     "Normal": 8,
-    "Hard": 5,
+    "Hard": 6, # FIX: 5 attempts could not guarantee a win on 1-50 (needs up to 6)
 }
 attempt_limit = attempt_limit_map[difficulty]
 
@@ -27,38 +26,42 @@ low, high = get_range_for_difficulty(difficulty)
 st.sidebar.caption(f"Range: {low} to {high}")
 st.sidebar.caption(f"Attempts allowed: {attempt_limit}")
 
-if "secret" not in st.session_state:
-    st.session_state.secret = random.randint(low, high)
-
-if "attempts" not in st.session_state:
-    st.session_state.attempts = 0
-
-if "score" not in st.session_state:
-    st.session_state.score = 0
-
-if "status" not in st.session_state:
-    st.session_state.status = "playing"
-
-if "history" not in st.session_state:
-    st.session_state.history = []
+if st.session_state.get("difficulty") != difficulty:
+    # FIX: first load or a difficulty change restarts the game completely
+    for key, value in new_game_state(low, high).items():
+        st.session_state[key] = value
+    st.session_state.difficulty = difficulty
 
 st.subheader("Make a guess")
 
-st.info(
-    f"Guess a number between 1 and 100. "
-    f"Attempts left: {attempt_limit - st.session_state.attempts}"
-)
+info_box = st.empty()
+
+
+def show_info(): # FIX: additional module for data
+    info_box.info(
+        f"Guess a number between {low} and {high}. " # FIX: use the real range
+        f"Attempts left: {attempt_limit - st.session_state.attempts}"
+    )
+
 
 with st.expander("Developer Debug Info"):
-    st.write("Secret:", st.session_state.secret)
-    st.write("Attempts:", st.session_state.attempts)
-    st.write("Score:", st.session_state.score)
-    st.write("Difficulty:", difficulty)
-    st.write("History:", st.session_state.history)
+    debug_box = st.empty()
+
+
+def show_debug(): # FIX: panel is redrawn after the guess so it never shows stale values
+    with debug_box.container():
+        st.write("Secret:", st.session_state.secret)
+        st.write("Attempts:", st.session_state.attempts)
+        st.write("Score:", st.session_state.score)
+        st.write("Difficulty:", difficulty)
+        st.write("History:", st.session_state.history)
+
+
+show_debug()
 
 raw_guess = st.text_input(
     "Enter your guess:",
-    key=f"guess_input_{difficulty}"
+    key=f"guess_input_{difficulty}_{st.session_state.get('input_reset', 0)}" # FIX: changing the key clears the box
 )
 
 col1, col2, col3 = st.columns(3)
@@ -72,8 +75,11 @@ with col3:
 if new_game:
     for key, value in new_game_state(low, high).items():
         st.session_state[key] = value
+    st.session_state.input_reset = st.session_state.get("input_reset", 0) + 1 # FIX: clear the guess box on New Game
     st.success("New game started.")
     st.rerun()
+
+show_info()
 
 if st.session_state.status != "playing":
     if st.session_state.status == "won":
@@ -83,14 +89,14 @@ if st.session_state.status != "playing":
     st.stop()
 
 if submit:
-    st.session_state.attempts += 1
-
-    ok, guess_int, err = parse_guess(raw_guess)
+    ok, guess_int, err = parse_guess(raw_guess, low, high)
 
     if not ok:
         st.session_state.history.append(raw_guess)
         st.error(err)
+        # FIX: invalid input is logged only; no attempt used, no score change
     else:
+        st.session_state.attempts += 1 # FIX: only valid guesses use an attempt
         st.session_state.history.append(guess_int)
 
         outcome = check_guess(guess_int, st.session_state.secret)
@@ -124,6 +130,9 @@ if submit:
                     f"The secret was {st.session_state.secret}. "
                     f"Score: {st.session_state.score}"
                 )
+
+show_info() # FIX: refresh "Attempts left" after the guess is processed
+show_debug()
 
 st.divider()
 st.caption("Built by an AI that claims this code is production-ready.")
